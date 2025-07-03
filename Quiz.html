@@ -3,16 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Click to Reveal IPL Image</title>
+  <title>Reveal Tiles – Multiple Images</title>
   <style>
     body {
-      background: white;
+      background: #f7f7f7;
+      font-family: Arial, sans-serif;
     }
-    #container {
-      position: relative;
+    .image-wrapper {
+      margin: 40px auto;
       width: 600px;
       height: 400px;
-      margin: 40px auto;
+      position: relative;
       border: 1px solid #ccc;
     }
     .part {
@@ -23,48 +24,55 @@
       background-color: transparent;
       border: 1px dashed transparent;
     }
-    .part.revealed {
-      border: none;
-      background-color: transparent;
-    }
     .part:hover {
       border-color: #999;
     }
     .part.visible {
       background-color: transparent;
+      border: none;
     }
-    #fullImage {
+    .fullImage {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       display: none;
       cursor: default;
     }
+    h2 {
+      text-align: center;
+      margin-top: 50px;
+    }
   </style>
 </head>
 <body>
-  <div id="container"></div>
-  <script>
-    const container = document.getElementById('container');
-    const imageSrc = "Here-Are-The-5-Richest-IPL-Teams.jpg"; // local image in same folder
 
-    const rows = 2;
-    const cols = 3;
-    const totalParts = rows * cols;
+<h2>Click to Reveal the IPL Images</h2>
 
+<!-- Create 5 containers for 5 images -->
+<div class="image-wrapper" data-image="img1.jpg"></div>
+<div class="image-wrapper" data-image="img2.jpg"></div>
+<div class="image-wrapper" data-image="img3.jpg"></div>
+<div class="image-wrapper" data-image="img4.jpg"></div>
+<div class="image-wrapper" data-image="img5.jpg"></div>
+
+<script>
+  const rows = 2;
+  const cols = 3;
+
+  document.querySelectorAll('.image-wrapper').forEach(container => {
+    const imageSrc = container.getAttribute('data-image');
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
+    const totalParts = rows * cols;
 
     const partsArray = [];
-    const revealedParts = new Set();
 
-    // Create full image element hidden initially
+    // Create full image
     const fullImage = document.createElement('img');
-    fullImage.id = "fullImage";
+    fullImage.className = "fullImage";
     fullImage.src = imageSrc;
     container.appendChild(fullImage);
 
-    // Create transparent clickable divs for each part
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
         const part = document.createElement('div');
@@ -78,23 +86,32 @@
         partsArray.push(part);
 
         part.addEventListener('click', () => {
-          if (revealedParts.has(part)) return;
+          if (part.classList.contains('visible')) {
+            // Hide part
+            part.style.backgroundImage = '';
+            part.classList.remove('visible');
+          } else {
+            // Reveal part
+            part.style.backgroundImage = `url(${imageSrc})`;
+            part.style.backgroundSize = `${containerWidth}px ${containerHeight}px`;
+            part.style.backgroundPosition = `-${c * containerWidth / cols}px -${r * containerHeight / rows}px`;
+            part.classList.add('visible');
+          }
 
-          part.style.backgroundImage = `url(${imageSrc})`;
-          part.style.backgroundSize = `${containerWidth}px ${containerHeight}px`;
-          part.style.backgroundPosition = `-${c * containerWidth / cols}px -${r * containerHeight / rows}px`;
-          part.style.border = 'none';
-          part.classList.add('visible');
+          const allRevealed = partsArray.every(p => p.classList.contains('visible'));
+          const noneRevealed = partsArray.every(p => !p.classList.contains('visible'));
 
-          revealedParts.add(part);
-
-          if (revealedParts.size === totalParts) {
+          if (allRevealed) {
             partsArray.forEach(p => p.style.display = 'none');
             fullImage.style.display = 'block';
+          } else {
+            partsArray.forEach(p => p.style.display = 'block');
+            fullImage.style.display = 'none';
           }
         });
       }
     }
-  </script>
+  });
+</script>
 </body>
 </html>
