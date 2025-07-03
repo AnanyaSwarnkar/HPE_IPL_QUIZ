@@ -1,227 +1,103 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8" />
-
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-
-<title>Click to Reveal Image Parts</title>
-
-<style>
-
-  body {
-
-    background: white;
-
-  }
-
-  #container {
-
-    position: relative;
-
-    width: 600px;  /* Adjust to your image size */
-
-    height: 400px; /* Adjust to your image size */
-
-    margin: 40px auto;
-
-    border: 1px solid #ccc;
-
-  }
-
-  .part {
-
-    position: absolute;
-
-    overflow: hidden;
-
-    cursor: pointer;
-
-    display: block; /* clickable areas visible but transparent */
-
-    background-color: transparent;
-
-    border: 1px dashed transparent; /* optionally show border on hover */
-
-  }
-
-  .part.revealed {
-
-    border: none;
-
-    background-color: transparent;
-
-  }
-
-  .part:hover {
-
-    border-color: #999;
-
-  }
-
-  .part.visible {
-
-    /* Shows the image portion */
-
-    background-color: transparent;
-
-  }
-
-  #fullImage {
-
-    position: absolute;
-
-    top: 0; left: 0;
-
-    width: 100%; height: 100%;
-
-    display: none;
-
-    cursor: default;
-
-  }
-
-</style>
-
-</head>
-
-<body>
-
- 
-
-<div id="container"></div>
-
- 
-
-<script>
-
-  const container = document.getElementById('container');
-
-  const imageSrc = https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW__LeJsnrSCy0twaCt-Mb8ew21k1ob41nZg&s/600x400; // Replace with your image URL
-
- 
-
-  const rows = 2;
-
-  const cols = 3;
-
-  const totalParts = rows * cols;
-
- 
-
-  const containerWidth = container.clientWidth;
-
-  const containerHeight = container.clientHeight;
-
- 
-
-  const partsArray = [];
-
-  const revealedParts = new Set();
-
- 
-
-  // Create full image element hidden initially
-
-  const fullImage = document.createElement('img');
-
-  fullImage.id = "fullImage";
-
-  fullImage.src = imageSrc;
-
-  container.appendChild(fullImage);
-
- 
-
-  // Create transparent clickable divs for each part
-
-  for (let r = 0; r < rows; r++) {
-
-    for (let c = 0; c < cols; c++) {
-
-      const part = document.createElement('div');
-
-      part.classList.add('part');
-
-      part.style.width = (containerWidth / cols) + 'px';
-
-      part.style.height = (containerHeight / rows) + 'px';
-
-      part.style.left = (c * containerWidth / cols) + 'px';
-
-      part.style.top = (r * containerHeight / rows) + 'px';
-
- 
-
-      // Store row and col for background positioning when revealed
-
-      part.dataset.row = r;
-
-      part.dataset.col = c;
-
- 
-
-      container.appendChild(part);
-
-      partsArray.push(part);
-
- 
-
-      // Click handler to reveal part
-
-      part.addEventListener('click', () => {
-
-        // If already revealed, ignore
-
-        if (revealedParts.has(part)) return;
-
- 
-
-        // Reveal this part by setting background image with correct cropping
-
-        part.style.backgroundImage = `url(${imageSrc})`;
-
-        part.style.backgroundSize = `${containerWidth}px ${containerHeight}px`;
-
-        part.style.backgroundPosition = `-${c * containerWidth / cols}px -${r * containerHeight / rows}px`;
-
-        part.style.border = 'none';
-
-        part.classList.add('visible');
-
- 
-
-        revealedParts.add(part);
-
- 
-
-        // Check if all parts revealed
-
-        if (revealedParts.size === totalParts) {
-
-          // Hide all parts
-
-          partsArray.forEach(p => p.style.display = 'none');
-
-          // Show full image
-
-          fullImage.style.display = 'block';
-
-        }
-
-      });
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Click to Reveal Image Parts</title>
+  <style>
+    body {
+      background: white;
     }
+    #container {
+      position: relative;
+      width: 600px;
+      height: 400px;
+      margin: 40px auto;
+      border: 1px solid #ccc;
+    }
+    .part {
+      position: absolute;
+      overflow: hidden;
+      cursor: pointer;
+      display: block;
+      background-color: transparent;
+      border: 1px dashed transparent;
+    }
+    .part.revealed {
+      border: none;
+      background-color: transparent;
+    }
+    .part:hover {
+      border-color: #999;
+    }
+    .part.visible {
+      background-color: transparent;
+    }
+    #fullImage {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: none;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+  <script>
+    const container = document.getElementById('container');
+    const imageSrc = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQW__LeJsnrSCy0twaCt-Mb8ew21k1ob41nZg&s";
 
-  }
+    const rows = 2;
+    const cols = 3;
+    const totalParts = rows * cols;
 
-</script>
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
 
- 
+    const partsArray = [];
+    const revealedParts = new Set();
 
+    // Create full image element hidden initially
+    const fullImage = document.createElement('img');
+    fullImage.id = "fullImage";
+    fullImage.src = imageSrc;
+    container.appendChild(fullImage);
+
+    // Create transparent clickable divs for each part
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const part = document.createElement('div');
+        part.classList.add('part');
+        part.style.width = (containerWidth / cols) + 'px';
+        part.style.height = (containerHeight / rows) + 'px';
+        part.style.left = (c * containerWidth / cols) + 'px';
+        part.style.top = (r * containerHeight / rows) + 'px';
+
+        part.dataset.row = r;
+        part.dataset.col = c;
+
+        container.appendChild(part);
+        partsArray.push(part);
+
+        part.addEventListener('click', () => {
+          if (revealedParts.has(part)) return;
+
+          part.style.backgroundImage = `url(${imageSrc})`;
+          part.style.backgroundSize = `${containerWidth}px ${containerHeight}px`;
+          part.style.backgroundPosition = `-${c * containerWidth / cols}px -${r * containerHeight / rows}px`;
+          part.style.border = 'none';
+          part.classList.add('visible');
+
+          revealedParts.add(part);
+
+          if (revealedParts.size === totalParts) {
+            partsArray.forEach(p => p.style.display = 'none');
+            fullImage.style.display = 'block';
+          }
+        });
+      }
+    }
+  </script>
 </body>
-
 </html>
