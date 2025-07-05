@@ -17,10 +17,12 @@
       margin: 20px auto;
     }
     .tile-row {
-      display: flex;
+      display: none;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
+    }
+    .tile-row.active {
+      display: flex;
     }
     .image-wrapper {
       width: 600px;
@@ -53,7 +55,7 @@
       left: 0;
     }
     .arrow-btn {
-      margin-left: 10px;
+      margin-top: 20px;
       font-size: 24px;
       padding: 10px 16px;
       background-color: #00a982;
@@ -122,11 +124,25 @@
     const rows = 2;
     const cols = 3;
 
+    const rowsArray = [];
+    const blurredImages = [
+      'img1.jpg',
+      'img2.jpg',
+      'img3.jpg',
+      'img4.jpg',
+      'img5.jpg'
+    ];
+
     for (let i = 0; i < 5; i++) {
+      const label = document.createElement('h3');
+      label.textContent = `Image ${i + 1}`;
+      label.style.marginBottom = '10px';
+      label.style.fontWeight = 'normal';
+
       const wrapper = document.createElement('div');
       wrapper.className = 'image-wrapper';
       const fullImage = document.createElement('img');
-      fullImage.src = "https://i0.wp.com/stockify.net.in/wp-content/uploads/2023/06/Here-Are-The-5-Richest-IPL-Teams.png";
+      fullImage.src = blurredImages[i];
       fullImage.className = 'fullImage';
       wrapper.appendChild(fullImage);
 
@@ -170,8 +186,51 @@
 
       const row = document.createElement('div');
       row.className = 'tile-row';
+      if (i === 0) row.classList.add('active');
+      row.appendChild(label);
       row.appendChild(wrapper);
-      row.appendChild(arrow);
+      const arrowContainer = document.createElement('div');
+      arrowContainer.style.display = 'flex';
+      arrowContainer.style.flexDirection = 'row';
+      arrowContainer.style.alignItems = 'center';
+      arrowContainer.style.marginTop = '0';
+      arrowContainer.style.marginLeft = '20px';
+
+      const imageAndArrow = document.createElement('div');
+      imageAndArrow.style.display = 'flex';
+      imageAndArrow.style.flexDirection = 'row';
+      imageAndArrow.style.alignItems = 'center';
+
+      imageAndArrow.appendChild(wrapper);
+      arrowContainer.appendChild(arrow);
+      imageAndArrow.appendChild(arrowContainer);
+
+      row.appendChild(label);
+      row.appendChild(imageAndArrow);
+      rowsArray.push(row);
+      const nav = document.createElement('div');
+      nav.style.marginTop = '10px';
+      nav.style.display = 'flex';
+      nav.style.gap = '20px';
+      nav.style.justifyContent = 'center';
+
+      const prevBtn = document.createElement('button');
+      prevBtn.textContent = 'Previous';
+      prevBtn.className = 'arrow-btn';
+      prevBtn.onclick = () => navigateTo(i - 1);
+
+      const nextBtn = document.createElement('button');
+      nextBtn.textContent = 'Next';
+      nextBtn.className = 'arrow-btn';
+      nextBtn.onclick = () => navigateTo(i + 1);
+
+      nav.appendChild(prevBtn);
+      nav.appendChild(nextBtn);
+      row.appendChild(nav);
+
+      row.prevBtn = prevBtn;
+      row.nextBtn = nextBtn;
+
       tileContainer.appendChild(row);
     }
 
@@ -191,6 +250,15 @@
       revealTile.style.display = 'none';
       clearImage.style.display = 'block';
     });
+
+    function navigateTo(index) {
+      if (index < 0 || index >= rowsArray.length) return;
+      rowsArray.forEach(row => row.classList.remove('active'));
+      rowsArray[index].classList.add('active');
+
+      rowsArray[index].prevBtn.disabled = index === 0;
+      rowsArray[index].nextBtn.disabled = index === rowsArray.length - 1;
+    }
   </script>
 </body>
 </html>
