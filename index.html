@@ -2,131 +2,195 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Reveal Tiles – Multiple Images</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tile Reveal with Navigation</title>
   <style>
     body {
-      background: #f7f7f7;
       font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 0;
+      text-align: center;
     }
-
+    .container {
+      max-width: 640px;
+      margin: 20px auto;
+    }
+    .tile-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
     .image-wrapper {
-      margin: 40px auto;
       width: 600px;
       height: 400px;
       position: relative;
       border: 1px solid #ccc;
     }
-
     .part {
       position: absolute;
-      overflow: hidden;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       background-color: #00a982;
       color: white;
       font-size: 28px;
       font-weight: bold;
-      border: 1px dashed transparent;
-      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
-
-    .part:hover {
-      border-color: #999;
-    }
-
     .part.visible {
-      color: transparent;
       background-color: transparent;
-      border: none;
+      color: transparent;
     }
-
     .fullImage {
+      display: none;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      display: none;
-      cursor: default;
     }
-
-    h2 {
-      text-align: center;
-      margin-top: 50px;
+    .arrow-btn {
+      margin-left: 10px;
+      font-size: 24px;
+      padding: 10px 16px;
+      background-color: #00a982;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .arrow-btn:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    .clear-view {
+      display: none;
+    }
+    .single-tile {
+      width: 600px;
+      height: 400px;
+      margin: 20px auto;
+      background-color: #00a982;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .clearImage {
+      display: none;
+      width: 600px;
+      height: 400px;
+      object-fit: cover;
+      margin: 0 auto;
+    }
+    .back-btn {
+      margin: 20px auto;
+      font-size: 18px;
+      padding: 10px 20px;
+      background-color: #00a982;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-block;
     }
   </style>
 </head>
 <body>
+  <h2>Click Tiles to Reveal Image</h2>
 
-<h2>Click to Reveal the IPL Images</h2>
+  <div class="container" id="tileSection"></div>
 
-<div class="image-wrapper" data-image="img1.jpg"></div>
-<div class="image-wrapper" data-image="img2.jpg"></div>
-<div class="image-wrapper" data-image="img3.jpg"></div>
-<div class="image-wrapper" data-image="img4.jpg"></div>
-<div class="image-wrapper" data-image="img5.jpg"></div>
+  <div class="clear-view" id="clearSection">
+    <div class="single-tile" id="revealTile">Click to Reveal</div>
+    <img class="clearImage" id="clearImage" src="https://cdn.britannica.com/48/252748-050-C514EFDB/Virat-Kohli-India-celebrates-50th-century-Cricket-November-15-2023.jpg" />
+    <br>
+    <button class="back-btn" onclick="goBack()">&larr; Back</button>
+  </div>
 
-<script>
-  const rows = 2;
-  const cols = 3;
+  <script>
+    const tileContainer = document.getElementById('tileSection');
+    const clearSection = document.getElementById('clearSection');
+    const revealTile = document.getElementById('revealTile');
+    const clearImage = document.getElementById('clearImage');
+    const rows = 2;
+    const cols = 3;
 
-  document.querySelectorAll('.image-wrapper').forEach(container => {
-    const imageSrc = container.getAttribute('data-image');
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    const totalParts = rows * cols;
+    for (let i = 0; i < 5; i++) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'image-wrapper';
+      const fullImage = document.createElement('img');
+      fullImage.src = "https://i0.wp.com/stockify.net.in/wp-content/uploads/2023/06/Here-Are-The-5-Richest-IPL-Teams.png";
+      fullImage.className = 'fullImage';
+      wrapper.appendChild(fullImage);
 
-    const partsArray = [];
+      const partsArray = [];
+      let tileNumber = 1;
 
-    const fullImage = document.createElement('img');
-    fullImage.className = "fullImage";
-    fullImage.src = imageSrc;
-    container.appendChild(fullImage);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const part = document.createElement('div');
+          part.classList.add('part');
+          part.style.width = (600 / cols) + 'px';
+          part.style.height = (400 / rows) + 'px';
+          part.style.left = (c * 600 / cols) + 'px';
+          part.style.top = (r * 400 / rows) + 'px';
+          part.textContent = tileNumber++;
 
-    let tileNumber = 1;
+          part.addEventListener('click', () => {
+            if (!part.classList.contains('visible')) {
+              part.classList.add('visible');
+              part.style.backgroundImage = `url(${fullImage.src})`;
+              part.style.backgroundSize = `600px 400px`;
+              part.style.backgroundPosition = `-${c * 600 / cols}px -${r * 400 / rows}px`;
+            } else {
+              part.classList.remove('visible');
+              part.style.backgroundImage = '';
+            }
+            const allVisible = partsArray.every(p => p.classList.contains('visible'));
+            arrow.disabled = !allVisible;
+          });
 
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        const part = document.createElement('div');
-        part.classList.add('part');
-        part.style.width = (containerWidth / cols) + 'px';
-        part.style.height = (containerHeight / rows) + 'px';
-        part.style.left = (c * containerWidth / cols) + 'px';
-        part.style.top = (r * containerHeight / rows) + 'px';
-
-        part.textContent = tileNumber++;
-
-        container.appendChild(part);
-        partsArray.push(part);
-
-        part.addEventListener('click', () => {
-          if (part.classList.contains('visible')) {
-            part.style.backgroundImage = '';
-            part.classList.remove('visible');
-          } else {
-            part.style.backgroundImage = `url(${imageSrc})`;
-            part.style.backgroundSize = `${containerWidth}px ${containerHeight}px`;
-            part.style.backgroundPosition = `-${c * containerWidth / cols}px -${r * containerHeight / rows}px`;
-            part.classList.add('visible');
-          }
-
-          const allRevealed = partsArray.every(p => p.classList.contains('visible'));
-          const noneRevealed = partsArray.every(p => !p.classList.contains('visible'));
-
-          if (allRevealed) {
-            partsArray.forEach(p => p.style.display = 'none');
-            fullImage.style.display = 'block';
-          } else {
-            partsArray.forEach(p => p.style.display = 'flex'); // ensure flex is reapplied
-            fullImage.style.display = 'none';
-          }
-        });
+          wrapper.appendChild(part);
+          partsArray.push(part);
+        }
       }
+
+      const arrow = document.createElement('button');
+      arrow.className = 'arrow-btn';
+      arrow.innerHTML = '&rarr;';
+      arrow.disabled = true;
+      arrow.onclick = () => showClearImage();
+
+      const row = document.createElement('div');
+      row.className = 'tile-row';
+      row.appendChild(wrapper);
+      row.appendChild(arrow);
+      tileContainer.appendChild(row);
     }
-  });
-</script>
+
+    function showClearImage() {
+      tileContainer.style.display = 'none';
+      clearSection.style.display = 'block';
+      revealTile.style.display = 'flex';
+      clearImage.style.display = 'none';
+    }
+
+    function goBack() {
+      clearSection.style.display = 'none';
+      tileContainer.style.display = 'block';
+    }
+
+    revealTile.addEventListener('click', () => {
+      revealTile.style.display = 'none';
+      clearImage.style.display = 'block';
+    });
+  </script>
 </body>
 </html>
