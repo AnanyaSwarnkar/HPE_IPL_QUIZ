@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tile Reveal with Navigation</title>
+  <title>HPE IPL QUIZ 2025</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -105,13 +105,13 @@
   </style>
 </head>
 <body>
-  <h2>Click Tiles to Reveal Image</h2>
+  <h2>HPE IPL QUIZ 2025</h2>
 
   <div class="container" id="tileSection"></div>
 
   <div class="clear-view" id="clearSection">
-    <div class="single-tile" id="revealTile">Click to Reveal</div>
-    <img class="clearImage" id="clearImage" src="https://cdn.britannica.com/48/252748-050-C514EFDB/Virat-Kohli-India-celebrates-50th-century-Cricket-November-15-2023.jpg" />
+    <div class="single-tile" id="revealTile">Answer</div>
+    <img class="clearImage" id="clearImage" src="i1.jpg" />
     <br>
     <button class="back-btn" onclick="goBack()">&larr; Back</button>
   </div>
@@ -121,6 +121,8 @@
     const clearSection = document.getElementById('clearSection');
     const revealTile = document.getElementById('revealTile');
     const clearImage = document.getElementById('clearImage');
+    const clearImages = ['i1.jpg', 'i2.jpg', 'i3.jpg', 'i4.jpg', 'i5.jpg'];
+    let currentIndex = 0;
     const rows = 2;
     const cols = 3;
 
@@ -239,6 +241,7 @@
       clearSection.style.display = 'block';
       revealTile.style.display = 'flex';
       clearImage.style.display = 'none';
+      clearImage.src = clearImages[currentIndex];
     }
 
     function goBack() {
@@ -255,9 +258,9 @@
       if (index < 0 || index >= rowsArray.length) return;
       rowsArray.forEach(row => row.classList.remove('active'));
       rowsArray[index].classList.add('active');
-
       rowsArray[index].prevBtn.disabled = index === 0;
       rowsArray[index].nextBtn.disabled = index === rowsArray.length - 1;
+      currentIndex = index;
     }
   </script>
 </body>
