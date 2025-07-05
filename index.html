@@ -9,6 +9,7 @@
       background: #f7f7f7;
       font-family: Arial, sans-serif;
     }
+
     .image-wrapper {
       margin: 40px auto;
       width: 600px;
@@ -16,28 +17,42 @@
       position: relative;
       border: 1px solid #ccc;
     }
+
     .part {
       position: absolute;
       overflow: hidden;
       cursor: pointer;
-      display: block;
-      background-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #00a982;
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
       border: 1px dashed transparent;
+      text-align: center;
     }
+
     .part:hover {
       border-color: #999;
     }
+
     .part.visible {
+      color: transparent;
       background-color: transparent;
       border: none;
     }
+
     .fullImage {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       display: none;
       cursor: default;
     }
+
     h2 {
       text-align: center;
       margin-top: 50px;
@@ -48,7 +63,6 @@
 
 <h2>Click to Reveal the IPL Images</h2>
 
-<!-- Create 5 containers for 5 images -->
 <div class="image-wrapper" data-image="img1.jpg"></div>
 <div class="image-wrapper" data-image="img2.jpg"></div>
 <div class="image-wrapper" data-image="img3.jpg"></div>
@@ -67,11 +81,12 @@
 
     const partsArray = [];
 
-    // Create full image
     const fullImage = document.createElement('img');
     fullImage.className = "fullImage";
     fullImage.src = imageSrc;
     container.appendChild(fullImage);
+
+    let tileNumber = 1;
 
     for (let r = 0; r < rows; r++) {
       for (let c = 0; c < cols; c++) {
@@ -82,16 +97,16 @@
         part.style.left = (c * containerWidth / cols) + 'px';
         part.style.top = (r * containerHeight / rows) + 'px';
 
+        part.textContent = tileNumber++;
+
         container.appendChild(part);
         partsArray.push(part);
 
         part.addEventListener('click', () => {
           if (part.classList.contains('visible')) {
-            // Hide part
             part.style.backgroundImage = '';
             part.classList.remove('visible');
           } else {
-            // Reveal part
             part.style.backgroundImage = `url(${imageSrc})`;
             part.style.backgroundSize = `${containerWidth}px ${containerHeight}px`;
             part.style.backgroundPosition = `-${c * containerWidth / cols}px -${r * containerHeight / rows}px`;
@@ -105,7 +120,7 @@
             partsArray.forEach(p => p.style.display = 'none');
             fullImage.style.display = 'block';
           } else {
-            partsArray.forEach(p => p.style.display = 'block');
+            partsArray.forEach(p => p.style.display = 'flex'); // ensure flex is reapplied
             fullImage.style.display = 'none';
           }
         });
