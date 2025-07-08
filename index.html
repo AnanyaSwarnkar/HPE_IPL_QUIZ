@@ -150,12 +150,13 @@
     const clearSection = document.getElementById('clearSection');
     const revealTile = document.getElementById('revealTile');
     const clearImage = document.getElementById('clearImage');
-    const clearImages = ['i1.jpg', 'i2.jpg', 'i3.jpg', 'i4.jpg', 'i5.jpg'];
-    const blurredImages = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg'];
+
+    const clearImages = ['i1.jpg', 'i2.jpg', 'i3.jpg', 'i4.jpg', 'i5.jpg', 'i6.jpg', 'i7.jpg'];
+    const blurredImages = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7.jpg'];
+
     const rowsArray = [];
     let currentIndex = 0;
 
-    // Timer state per slide
     const timerStates = [];
 
     function createTimerControls(index) {
@@ -167,7 +168,6 @@
       resetBtn.className = 'reset-btn';
       resetBtn.textContent = "Reset";
 
-      // Initialize state
       timerStates[index] = {
         interval: null,
         timeLeft: 60,
@@ -176,7 +176,7 @@
 
       timerCircle.addEventListener('click', () => {
         const state = timerStates[index];
-        if (state.interval) return; // Already running
+        if (state.interval) return;
 
         state.timeLeft = 60;
         timerCircle.textContent = state.timeLeft + 's';
@@ -206,7 +206,7 @@
       return container;
     }
 
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 7; i++) {
       const label = document.createElement('h3');
       label.textContent = `Image ${i + 1}`;
       label.style.marginBottom = '10px';
