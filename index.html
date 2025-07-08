@@ -102,6 +102,35 @@
       cursor: pointer;
       display: inline-block;
     }
+    .timer-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-left: 20px;
+      gap: 10px;
+    }
+    .timer-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background-color: red;
+      color: white;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .reset-btn {
+      font-size: 14px;
+      padding: 6px 12px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -122,24 +151,65 @@
     const revealTile = document.getElementById('revealTile');
     const clearImage = document.getElementById('clearImage');
     const clearImages = ['i1.jpg', 'i2.jpg', 'i3.jpg', 'i4.jpg', 'i5.jpg'];
-    let currentIndex = 0;
-    const rows = 2;
-    const cols = 3;
-
+    const blurredImages = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg'];
     const rowsArray = [];
-    const blurredImages = [
-      'img1.jpg',
-      'img2.jpg',
-      'img3.jpg',
-      'img4.jpg',
-      'img5.jpg'
-    ];
+    let currentIndex = 0;
+
+    // Timer state per slide
+    const timerStates = [];
+
+    function createTimerControls(index) {
+      const timerCircle = document.createElement('div');
+      timerCircle.className = 'timer-circle';
+      timerCircle.textContent = "Start";
+
+      const resetBtn = document.createElement('button');
+      resetBtn.className = 'reset-btn';
+      resetBtn.textContent = "Reset";
+
+      // Initialize state
+      timerStates[index] = {
+        interval: null,
+        timeLeft: 60,
+        element: timerCircle
+      };
+
+      timerCircle.addEventListener('click', () => {
+        const state = timerStates[index];
+        if (state.interval) return; // Already running
+
+        state.timeLeft = 60;
+        timerCircle.textContent = state.timeLeft + 's';
+        state.interval = setInterval(() => {
+          state.timeLeft--;
+          timerCircle.textContent = state.timeLeft + 's';
+          if (state.timeLeft <= 0) {
+            clearInterval(state.interval);
+            state.interval = null;
+            timerCircle.textContent = "Time's up!";
+          }
+        }, 1000);
+      });
+
+      resetBtn.addEventListener('click', () => {
+        const state = timerStates[index];
+        clearInterval(state.interval);
+        state.interval = null;
+        state.timeLeft = 60;
+        timerCircle.textContent = "Start";
+      });
+
+      const container = document.createElement('div');
+      container.className = 'timer-container';
+      container.appendChild(timerCircle);
+      container.appendChild(resetBtn);
+      return container;
+    }
 
     for (let i = 0; i < 5; i++) {
       const label = document.createElement('h3');
       label.textContent = `Image ${i + 1}`;
       label.style.marginBottom = '10px';
-      label.style.fontWeight = 'normal';
 
       const wrapper = document.createElement('div');
       wrapper.className = 'image-wrapper';
@@ -148,13 +218,17 @@
       fullImage.className = 'fullImage';
       wrapper.appendChild(fullImage);
 
+      const timerContainer = createTimerControls(i);
+
       const partsArray = [];
       let tileNumber = 1;
+      const rows = 2;
+      const cols = 3;
 
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
           const part = document.createElement('div');
-          part.classList.add('part');
+          part.className = 'part';
           part.style.width = (600 / cols) + 'px';
           part.style.height = (400 / rows) + 'px';
           part.style.left = (c * 600 / cols) + 'px';
@@ -171,6 +245,7 @@
               part.classList.remove('visible');
               part.style.backgroundImage = '';
             }
+
             const allVisible = partsArray.every(p => p.classList.contains('visible'));
             arrow.disabled = !allVisible;
           });
@@ -190,26 +265,26 @@
       row.className = 'tile-row';
       if (i === 0) row.classList.add('active');
       row.appendChild(label);
-      row.appendChild(wrapper);
+
+      const imageRow = document.createElement('div');
+      imageRow.style.display = 'flex';
+      imageRow.style.alignItems = 'center';
+      imageRow.appendChild(wrapper);
+      imageRow.appendChild(timerContainer);
+
       const arrowContainer = document.createElement('div');
       arrowContainer.style.display = 'flex';
-      arrowContainer.style.flexDirection = 'row';
-      arrowContainer.style.alignItems = 'center';
-      arrowContainer.style.marginTop = '0';
       arrowContainer.style.marginLeft = '20px';
-
-      const imageAndArrow = document.createElement('div');
-      imageAndArrow.style.display = 'flex';
-      imageAndArrow.style.flexDirection = 'row';
-      imageAndArrow.style.alignItems = 'center';
-
-      imageAndArrow.appendChild(wrapper);
       arrowContainer.appendChild(arrow);
-      imageAndArrow.appendChild(arrowContainer);
 
-      row.appendChild(label);
-      row.appendChild(imageAndArrow);
-      rowsArray.push(row);
+      const fullRow = document.createElement('div');
+      fullRow.style.display = 'flex';
+      fullRow.style.alignItems = 'center';
+      fullRow.appendChild(imageRow);
+      fullRow.appendChild(arrowContainer);
+
+      row.appendChild(fullRow);
+
       const nav = document.createElement('div');
       nav.style.marginTop = '10px';
       nav.style.display = 'flex';
@@ -234,6 +309,7 @@
       row.nextBtn = nextBtn;
 
       tileContainer.appendChild(row);
+      rowsArray.push(row);
     }
 
     function showClearImage() {
