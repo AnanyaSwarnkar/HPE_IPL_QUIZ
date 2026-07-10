@@ -151,8 +151,8 @@
     const revealTile = document.getElementById('revealTile');
     const clearImage = document.getElementById('clearImage');
 
-    const clearImages = ['i1.jpg', 'i2.jpg', 'i3.jpg', 'i4.jpg', 'i5.jpg', 'i6.jpg', 'i7.jpg'];
-    const blurredImages = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7.jpg'];
+    const clearImages = ['i1.jpg', 'i2.jpg', 'i3.jpg', 'i4.jpg', 'i5.jpg', 'i6.jpg', 'i7.jpg', 'i8.jpg'];
+    const blurredImages = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7.jpg', 'img8.jpg'];
 
     const rowsArray = [];
     let currentIndex = 0;
@@ -206,7 +206,7 @@
       return container;
     }
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 8; i++) {
       const label = document.createElement('h3');
       label.textContent = `Image ${i + 1}`;
       label.style.marginBottom = '10px';
